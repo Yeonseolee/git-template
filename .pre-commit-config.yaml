@@ -1,0 +1,41 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  # 1. 기본 유틸리티 체크 (보안, 충돌, 파일 형식 등)
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-added-large-files
+        args: ['--maxkb=2048'] # LLM 리소스를 고려해 2MB로 완화 (필요시 조절)
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        files: \.(c|cc|cxx|cpp|cu|h|hpp|hxx|py)$
+      - id: check-yaml
+
+  # 2. 줄바꿈 및 탭 제거 (Windows/Mac 협업 대비)
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.5.5
+    hooks:
+      - id: remove-crlf
+      - id: remove-tabs
+        files: \.(c|cc|cxx|cpp|cu|h|hpp|hxx|py)$
+  
+  # 3. Ruff (Black + Isort + Flake8 통합 도구)
+  # 매우 빠르며, 코드 포맷팅/import 정렬/린팅을 한 번에 해결합니다.
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.9.6  # 최신 버전 확인 권장
+    hooks:
+      # 린팅 및 자동 수정 (isort 기능 포함)
+      - id: ruff
+        args: [ --fix, --exit-non-zero-on-fix ]
+        exclude: ^benchmark/|^test_tipc/
+      # 포맷팅 (black 대용)
+      - id: ruff-format
+        exclude: ^benchmark/|^test_tipc/
+
+# 전체 프로젝트에서 제외할 폴더가 있다면 여기에 추가
+exclude: ^(venv|\.venv|env|\.env|bin|lib|node_modules)/
